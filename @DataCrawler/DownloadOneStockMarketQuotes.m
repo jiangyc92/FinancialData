@@ -43,34 +43,37 @@ N0 = EndDate - BeginDate + 1;
 N = length(Years);
 RowN = 0;
 
-Date = cells(N0, 1);
+Date = cell(N0, 1);
 if FuQuan
-    Data = cells(N0, 7);
+    Data = zeros(N0, 7);
 else
-    Data = cells(N0, 6);
+    Data = zeros(N0, 6);
 end
 
 for i = 1:N
     Url = sprintf([Url0, 'year=%d&jidu=%d'], Years(i), Seasons(i));
+    pause(rand() * 0.3);
     [Source, Status] = urlread(Url);
     if ~Status
         error('获取数据失败!');
     end
     [Date0, Data0] = obj.MarketDataParser(Source, FuQuan);
     if i == 1
-        DateNumList = datenum(Date);
+        DateNumList = datenum(Date0);
         Index = DateNumList >= BeginDate;
         Date0 = Date0(Index);
         Data0 = Data0(Index, :);
     end
     
     if i == N
-        DateNumList = datenum(Date);
+        DateNumList = datenum(Date0);
         Index = DateNumList <= EndDate;
         Date0 = Date0(Index);
         Data0 = Data0(Index, :);
     end
     
+    Date0 = Date0(end:-1:1);
+    Data0 = Data0(end:-1:1, :);
     N0 = length(Date0);
     Date(RowN+1:RowN+N0) = Date0;
     Data(RowN+1:RowN+N0, :) = Data0;
@@ -80,11 +83,16 @@ end
 Data = Data(1:RowN, :);
 Date = Date(1:RowN);
 
-if ~isempty(StockFile)
-    DataToStore = cells(RowN, size(Data,2) + 1);
+
+if ~isempty(StoreFile)
+    DataToStore = cell(RowN, size(Data,2) + 1);
     DataToStore(:,1) = Date;
-    DataToStore(:,2:end) = mat2cell(Data, ones(size(Data,1),1), size(Data,2));
-    obj.StoreDataToFile(DataToStore, StoreFile);
+    DataToStore(:,2:end) = num2cell(Data);
+    ColName = {'Date', 'Open', 'High', 'Close', 'Low', 'Volume', 'Amount', 'AdjFactor'};
+    if ~FuQuan
+        ColName = ColName(1:7);
+    end
+    obj.StoreDataToFile(DataToStore, StoreFile, ColName);
 end
 
 if nargout == 1
