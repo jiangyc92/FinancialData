@@ -1,4 +1,12 @@
 function varargout = DownloadOneStockMarketQuotes(varargin)
+% 获取股票或指数日行情
+% 有如下变量可以选择：
+%   Ticker: 标的代码, 6位数字组成的字符串
+%   Type: 标的类型，可以选择'S'表示股票, 'I'表示指数，默认'S'
+%   BeginDate: 起始日期，格式为'yyyy-mm-dd'
+%   EndDate: 终止日期，格式为'yyyy-mm-dd'
+%   StoreFile: 如需要存储到文件的话这里写上文件名
+%   FuQuan: 是否需要复权，true或false，该变量股票有效
 
 obj = varargin{1};
 if mod(nargin, 1)
@@ -10,7 +18,7 @@ BeginDate = [];
 EndDate = [];
 FuQuan = false;
 StoreFile = [];
-
+Type = 'S';
 for i = 2:2:nargin-1
     if strcmp(varargin{i}, 'Ticker')
         Ticker = varargin{i+1};
@@ -27,6 +35,9 @@ for i = 2:2:nargin-1
     if strcmp(varargin{i}, 'StoreFile')
         StoreFile = varargin{i+1};
     end
+    if strcmp(varargin{i}, 'Type')
+        Type = varargin{i+1};
+    end
 end
 
 if FuQuan
@@ -35,8 +46,13 @@ else
     FuncStr = 'vMS_MarketHistory';
 end
 
-Url0 = ['http://vip.stock.finance.sina.com.cn/corp/go.php/', FuncStr, '/stockid/', ...
-        Ticker, '/all.phtml?'];
+if strcmp(Type, 'S')
+    Url0 = ['http://vip.stock.finance.sina.com.cn/corp/go.php/', FuncStr, '/stockid/', ...
+            Ticker, '/all.phtml?'];
+elseif strcmp(Type, 'I')
+    Url0 = ['http://vip.stock.finance.sina.com.cn/corp/go.php/', FuncStr, '/stockid/', ...
+            Ticker, '/type/S.phtml?'];
+end
 
 [Years, Seasons] = obj.GetSeasons(BeginDate, EndDate);
 N0 = EndDate - BeginDate + 1;
