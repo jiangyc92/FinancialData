@@ -1,14 +1,14 @@
 classdef DataCrawler < handle
-    properties
-        Universe
-    end
-    
+  
     methods
         [Years, Seasons] = GetSeasons(obj, BeginDate, EndDate);
         [Date, Data] = MarketDataParser(obj, Source, FuQuan);
+        [Tickers, InDate] = IndexConsParser(obj, Source);
+        StoreDataToFile(obj, DataToStore, StoreFile, ColName);
         DownloadMarket(varargin);
-        DownloadFundamental(varargin);
-        DownloadOneStockMarket(varargin);
-        DownladOneStockFundamental(varargin);
+        DownloadFundamentals(varargin);
+        DownloadOneStockMarketQuotes(varargin);
+        DownladOneStockFundamentals(varargin);
+        DownloadIndexCons(varargin);
     end
 end

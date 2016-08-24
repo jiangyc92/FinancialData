@@ -1,5 +1,5 @@
 function [Tickers, InData] = IndexConsParser(obj, Source)
-% 解析网页
+% 解析指数成分股网页
 
 DateExpr = '\s+(\d\d\d\d-\d\d-\d\d)\s*';
 [~, DateTokens]= regexp(Source, DateExpr, 'match', 'tokens');
