@@ -50,7 +50,7 @@ if strcmp(Type, 'S')
     Url0 = ['http://vip.stock.finance.sina.com.cn/corp/go.php/', FuncStr, '/stockid/', ...
             Ticker, '/all.phtml?'];
 elseif strcmp(Type, 'I')
-    Url0 = ['http://vip.stock.finance.sina.com.cn/corp/go.php/', FuncStr, '/stockid/', ...
+    Url0 = ['http://vip.stock.finance.sina.com.cn/corp/go.php/vMS_MarketHistory/stockid/', ...
             Ticker, '/type/S.phtml?'];
 end
 
@@ -104,21 +104,21 @@ if ~isempty(StoreFile)
     DataToStore = cell(RowN, size(Data,2) + 1);
     DataToStore(:,1) = Date;
     DataToStore(:,2:end) = num2cell(Data);
-    ColName = {'Date', 'Open', 'High', 'Close', 'Low', 'Volume', 'Amount', 'AdjFactor'};
-    if ~FuQuan
-        ColName = ColName(1:7);
+    if FuQuan
+        ColName = cell(1, 8);
+        ColName(1:7) = obj.FieldName;
+        ColName{8} = 'AdjFactor';
+    else
+        ColName = obj.FieldName;
     end
     obj.StoreDataToFile(DataToStore, StoreFile, ColName);
 end
 
 if nargout == 1
     StockData.Date = datenum(Date);
-    StockData.Open = Data(:,1);
-    StockData.High = Data(:,2);
-    StockData.Close = Data(:,3);
-    StockData.Low = Data(:,4);
-    StockData.Volume = Data(:,5);
-    StockData.Amount = Data(:,6);
+    for i = 1:6
+        StockData.(obj.FieldName{i+1}) = Data(:, i);
+    end
     if FuQuan
         StockData.AdjFactor = Data(:,7);
     end

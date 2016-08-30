@@ -1,5 +1,8 @@
 function varargout = DownloadIndexCons(varargin)
-
+% 获取指数的当前成分股
+% 有如下变量可以选择：
+%   Ticker: 指数代码, 6位数字组成的字符串
+%   StoreFile: 如需要存储到文件的话这里写上文件名
 
 obj = varargin{1};
 if mod(nargin, 1)
@@ -24,7 +27,8 @@ Url = sprintf([Url0, '%s.phtml'], Ticker);
 if ~Status
     error('获取数据失败!');
 end
-[Tickers, InDate] = obj.IndexConsParser(obj, Source);
+
+[Tickers, InDate] = obj.IndexConsParser(Source);
 
 
 if ~isempty(StoreFile)

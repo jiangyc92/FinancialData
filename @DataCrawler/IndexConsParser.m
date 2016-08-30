@@ -1,7 +1,7 @@
-function [Tickers, InData] = IndexConsParser(obj, Source)
+function [Tickers, InDate] = IndexConsParser(obj, Source)
 % 解析指数成分股网页
 
-DateExpr = '\s+(\d\d\d\d-\d\d-\d\d)\s*';
+DateExpr = '<div align="center">(\d\d\d\d-\d\d-\d\d)</div>';
 [~, DateTokens]= regexp(Source, DateExpr, 'match', 'tokens');
 DateNum = length(DateTokens);
 InDate = cell(DateNum, 1);
@@ -15,7 +15,6 @@ Tickers = cell(length(TickerTokens),1);
 for i = 1:length(TickerTokens)
     Tickers{i} = TickerTokens{i}{1};
 end
-
 
 if length(TickerTokens) ~= DateNum
     error('网页解析错误!');
