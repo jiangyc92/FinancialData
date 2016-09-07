@@ -74,6 +74,9 @@ for i = 1:N
         error('获取数据失败!');
     end
     [Date0, Data0] = obj.MarketDataParser(Source, FuQuan);
+    if isempty(Data0)
+        continue;
+    end
     if i == 1
         DateNumList = datenum(Date0);
         Index = DateNumList >= BeginDate;

@@ -40,8 +40,9 @@ if ~isempty(StoreFile)
 end
 
 if nargout == 1
-    IndexCons.Ticker = Ticker;
+    IndexCons.Ticker = Tickers;
     IndexCons.Date = datenum(InDate);
-    varargout{1} = StockData;
+    varargout{1} = IndexCons;
 end
+
 end

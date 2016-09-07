@@ -64,14 +64,14 @@ end
 N = length(Universe);
 
 % ≥ı ºªØ
-if naragout == 1
+if nargout == 1
     DateNum = EndDate - BeginDate;
-    varargout.Ticker = cell((DateNum + 1) * N);
+    varargout{1}.Ticker = cell((DateNum + 1) * N, 1);
     for i = 1:7
-        varargout.(obj.FieldName{i}) = zeros((DateNum + 1) * N);
+        varargout{1}.(obj.FieldName{i}) = zeros((DateNum + 1) * N, 1);
     end
     if FuQuan
-        varargout.AdjFactor = zeros((DateNum + 1) * N);
+        varargout{1}.AdjFactor = zeros((DateNum + 1) * N, 1);
     end
 end
 
@@ -82,28 +82,31 @@ for i = 1:N
     if isempty(StoreDir)
         StoreFile = [];
     else
+        if ~exist(StoreDir, 'dir')
+            mkdir(StoreDir);
+        end
         StoreFile = [StoreDir, '/', Ticker, '.xlsx'];
     end
     if nargout == 1
-        Data = DownloadOneStockMarketQuotes('Ticker', Universe{i}, 'BeginDate', BeginDate, ...
+        Data = obj.DownloadOneStockMarketQuotes('Ticker', Ticker, 'BeginDate', BeginDate, ...
             'EndDate', EndDate, 'FuQuan', FuQuan, 'StoreFile', StoreFile, 'Type', Type);
         M = length(Data.Date);
         FieldName0 = fieldnames(Data);
         for j = 1:length(FieldName0)
-            vargout.(FieldName0{j})(Row+1:Row+M) = Data.(FieldName0{j});
+            varargout{1}.(FieldName0{j})(Row+1:Row+M) = Data.(FieldName0{j});
         end
-        vargout.Ticker(Row+1:Row+M) = repmat({Ticker}, M, 1);
+        varargout{1}.Ticker(Row+1:Row+M) = repmat({Ticker}, M, 1);
         Row = Row + M;
     else
-        DownloadOneStockMarketQuotes('Ticker', Universe{i}, 'BeginDate', BeginDate, ...
+        obj.DownloadOneStockMarketQuotes('Ticker', Ticker, 'BeginDate', BeginDate, ...
             'EndDate', EndDate, 'FuQuan', FuQuan, 'StoreFile', StoreFile, 'Type', Type);
     end    
 end
 
 if nargout == 1
-    FieldName0 = fieldnames(vargout);
+    FieldName0 = fieldnames(varargout{1});
     for i = 1:length(FieldName0)
-        vargout.(FieldName0{i}) = vargout.(FieldName0{i})(1:Row);
+        varargout{1}.(FieldName0{i}) = varargout{1}.(FieldName0{i})(1:Row);
     end
 end
 end
