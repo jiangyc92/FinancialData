@@ -20,7 +20,7 @@ classdef DataCrawler < handle
                           'IncomeFromMainOper', ...         % 主营业务利润
                           'NetProfitAfterNonRecurring', ... % 扣除非经常性损益后净利润
                           'DebtToAsset', ...                % 资产负债率
-                          'TotalAsset'                      % 总资产
+                          'TotalAsset'                     % 总资产                          
                           };
         SINAFinancialRatioID = [
                                 40, ...
@@ -49,6 +49,8 @@ classdef DataCrawler < handle
         ReportDateList = GetReportDate(obj, BeginDate, EndDate);
         [Date, Data] = MarketDataParser(obj, Source, FuQuan);
         [Tickers, InDate] = IndexConsParser(obj, Source);
+        FinancialData = FinancialDataParser(obj, Source, ReportDateList)
+        PublishDateList = PublishDateParser(obj, Source);
         StoreDataToFile(obj, DataToStore, StoreFile, ColName);
         varargout = DownloadMarket(varargin);
         varargout = DownloadFundamentals(varargin);
@@ -56,5 +58,6 @@ classdef DataCrawler < handle
         varargout = DownladOneStockFundamentals(varargin);
         varargout = DownloadIndexCons(varargin);
         varargout = DownloadOneStockFinancials(varargin);
+        Out = DownloadOneStockPublishDate(obj, Ticker, ReportDateList);
     end
 end

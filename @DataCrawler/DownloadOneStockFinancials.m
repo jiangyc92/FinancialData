@@ -24,7 +24,7 @@ function varargout = DownloadOneStockFinancials(varargin)
 %     'IncomeFromMainOper',           主营业务利润
 %     'NetProfitAfterNonRecurring',   扣除非经常性损益后净利润
 %     'DebtToAsset',                  资产负债率
-%     'TotalAsset'                    总资产
+%     'TotalAsset',                   总资产
 
 obj = varargin{1};
 if mod(nargin, 1)
@@ -54,6 +54,8 @@ end
 if isempty(Field)
     error('需要指出Field');
 end
+
+
 Url0 = ['http://money.finance.sina.com.cn/corp/view/vFD_FinancialGuideLineHistory.php?stockid=', Ticker, '&typecode=financialratios'];
 if iscell(Field)
     Field = unique(Field);
@@ -104,6 +106,7 @@ if iscell(Field)
         ColName(2:end) = Field;
         obj.StoreDataToFile(DataToStore, StoreFile, ColName);
     end
+    
 else
     error('Field必须是cell结构!');
 end
